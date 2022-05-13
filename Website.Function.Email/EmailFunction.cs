@@ -33,7 +33,7 @@ namespace Website.Function.Email
             {
                 await _emailClient.SendEmailAsync(request.ToEmail, request.Subject, request.HtmlBody);
 
-                log.LogInformation("Email Successfully sent to : {ToEmail}", request.ToEmail);
+                log.LogInformation("Email Successfully sent to: {ToEmail}", request.ToEmail);
             }
             catch (Exception e)
             {
