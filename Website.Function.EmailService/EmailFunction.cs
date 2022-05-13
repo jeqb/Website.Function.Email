@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Website.Function.EmailService
 {
-    public class Function1
+    public class EmailFunction
     {
-        [FunctionName("Function1")]
+        [FunctionName("EmailFunction")]
         public void Run([QueueTrigger("email-service-queue", Connection = "ConnectionString")]string myQueueItem, ILogger log)
         {
             log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
