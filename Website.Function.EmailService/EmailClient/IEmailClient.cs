@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Website.Function.EmailService.EmailClient
+namespace Website.Function.Email.EmailClient
 {
     public interface IEmailClient
     {

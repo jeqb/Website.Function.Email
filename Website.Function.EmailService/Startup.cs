@@ -1,10 +1,10 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Website.Function.EmailService.EmailClient;
+using Website.Function.Email.EmailClient;
 
-[assembly: FunctionsStartup(typeof(Website.Function.EmailService.Startup))]
-namespace Website.Function.EmailService
+[assembly: FunctionsStartup(typeof(Website.Function.Email.Startup))]
+namespace Website.Function.Email
 {
     public class Startup : FunctionsStartup
     {

@@ -4,7 +4,7 @@ using MimeKit;
 using MimeKit.Text;
 using System.Threading.Tasks;
 
-namespace Website.Function.EmailService.EmailClient
+namespace Website.Function.Email.EmailClient
 {
     public class SmtpEmailClient : IEmailClient
     {

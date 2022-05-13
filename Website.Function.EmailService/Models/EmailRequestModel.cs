@@ -1,4 +1,4 @@
-﻿namespace Website.Function.EmailService.Models
+﻿namespace Website.Function.Email.Models
 {
     public class EmailRequestModel
     {

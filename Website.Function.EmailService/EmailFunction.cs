@@ -3,7 +3,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
-namespace Website.Function.EmailService
+namespace Website.Function.Email
 {
     public class EmailFunction
     {
