@@ -23,11 +23,24 @@ namespace Website.Function.Email
         {
             log.LogInformation($"EmailFunction started with payload: {myQueueItem}");
 
-            EmailRequestModel request = JsonSerializer.Deserialize<EmailRequestModel>(myQueueItem,
+            EmailRequestModel request = new();
+
+            try
+            {
+                request = JsonSerializer.Deserialize<EmailRequestModel>(myQueueItem,
                 new JsonSerializerOptions()
                 {
                     PropertyNameCaseInsensitive = true,
                 });
+            }
+            catch (Exception ex)
+            {
+                string eMessage = ex.Message;
+
+                log.LogError("Could not serialize jsonPayload into model with message: {eMessage}", eMessage);
+
+                return;
+            }
 
             try
             {
@@ -35,11 +48,11 @@ namespace Website.Function.Email
 
                 log.LogInformation("Email Successfully sent to: {ToEmail}", request.ToEmail);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                string eMessage = e.Message;
+                string eMessage = ex.Message;
 
-                log.LogInformation("An Exception occured while sending an email with message: {eMessage}", eMessage);
+                log.LogError("An Exception occured while sending an email with message: {eMessage}", eMessage);
 
                 log.LogDebug("ToEmail: {ToEmail}", request.ToEmail);
             }
