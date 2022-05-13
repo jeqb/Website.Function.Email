@@ -11,7 +11,7 @@ namespace Website.Function.Email.EmailClient
         private readonly string _smtpServer;
 
         private readonly int _smtpPort;
-
+        // email address
         private readonly string _userName;
 
         private readonly string _password;
@@ -35,11 +35,11 @@ namespace Website.Function.Email.EmailClient
         /// <param name="subject"></param>
         /// <param name="htmlBody"></param>
         /// <returns></returns>
-        public async Task SendEmailAsync(string fromEmail, string toEmail, string subject, string htmlBody)
+        public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
             // build the message
             MimeMessage email = new();
-            email.From.Add(MailboxAddress.Parse(fromEmail));
+            email.From.Add(MailboxAddress.Parse(_userName));
             email.To.Add(MailboxAddress.Parse(toEmail));
             email.Subject = subject;
             email.Body = new TextPart(TextFormat.Html) { Text = htmlBody };
