@@ -18,9 +18,9 @@ namespace Website.Function.Email
             builder.Services.AddScoped<IEmailClient, SmtpEmailClient>((serviceProvider) =>
             {
                 string smtpServer = serviceProvider.GetService<IConfiguration>()["SmtpServer"];
-                int.TryParse(serviceProvider.GetService<IConfiguration>()["smtpPort"], out int smtpPort);
-                string userName = serviceProvider.GetService<IConfiguration>()["smtpUserName"];
-                string password = serviceProvider.GetService<IConfiguration>()["smtpPassword"];
+                int.TryParse(serviceProvider.GetService<IConfiguration>()["SmtpPort"], out int smtpPort);
+                string userName = serviceProvider.GetService<IConfiguration>()["SmtpUserName"];
+                string password = serviceProvider.GetService<IConfiguration>()["SmtpPassword"];
 
                 return new SmtpEmailClient(smtpServer, smtpPort, userName, password);
             });
