@@ -1,9 +1,6 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Website.Function.Email.TableStorage
@@ -13,7 +10,7 @@ namespace Website.Function.Email.TableStorage
     /// TODO: Throw this into a Nuget package. make resuable for this project and the
     /// backend project.
     /// </summary>
-    public class TableStorageClient
+    public class StorageTableClient : IStorageTableClient
     {
         private readonly string _storageUri;
 
@@ -21,7 +18,7 @@ namespace Website.Function.Email.TableStorage
 
         private readonly string _storageAccountKey;
 
-        public TableStorageClient(string storageUri, string storageAccountName, string storageAccountKey)
+        public StorageTableClient(string storageUri, string storageAccountName, string storageAccountKey)
         {
             _storageUri = storageUri;
 
@@ -48,7 +45,6 @@ namespace Website.Function.Email.TableStorage
     
         /// <summary>
         /// Give it an entity and the name of the table to insert into storage.
-        /// I'm on the fence about the tableName param. maybe another way to do it.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>

@@ -14,10 +14,10 @@ namespace Website.Function.Email.TableStorage.Entities
 
         private ETag _eTag { get; set; }
 
-        // Incoming Queue Message String.
+        // Recipient Email Address we are messaging
         public string PartitionKey { get => _partitionKey; set => _partitionKey = value; }
 
-        // Recipient Email Address we are messaging
+        // Incoming Queue Message String. Always require a RowKey
         public string RowKey { get => _rowKey; set => _rowKey = value; }
 
         public DateTimeOffset? Timestamp { get => _timestamp; set => _timestamp = value; }
