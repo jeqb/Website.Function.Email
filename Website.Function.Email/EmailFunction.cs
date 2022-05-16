@@ -1,3 +1,4 @@
+using Azure.Data.Tables;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -5,8 +6,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Website.Function.Email.EmailClient;
 using Website.Function.Email.Models;
-using Website.Function.Email.TableStorage;
-using Website.Function.Email.TableStorage.Entities;
 
 namespace Website.Function.Email
 {
@@ -14,13 +13,13 @@ namespace Website.Function.Email
     {
         private readonly IEmailClient _emailClient;
 
-        private readonly IStorageTableClient _storageTableClient;
+        private readonly TableClient _tableClient;
 
-        public EmailFunction(IEmailClient emailClient, IStorageTableClient storageTableClient)
+        public EmailFunction(IEmailClient emailClient, TableClient tableClient)
         {
             _emailClient = emailClient;
 
-            _storageTableClient = storageTableClient;
+            _tableClient = tableClient;
         }
 
         [FunctionName("EmailFunction")]
@@ -29,15 +28,13 @@ namespace Website.Function.Email
         {
             log.LogInformation($"EmailFunction started with payload: {myQueueItem}");
 
-            EmailRequestModel request = new();
-
             try
             {
-                request = JsonSerializer.Deserialize<EmailRequestModel>(myQueueItem,
-                new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true,
-                });
+                EmailRequestModel request = JsonSerializer.Deserialize<EmailRequestModel>(myQueueItem,
+                    new JsonSerializerOptions()
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    });
 
                 await _emailClient.SendEmailAsync(request.ToEmail, request.Subject, request.HtmlBody);
 
@@ -49,14 +46,13 @@ namespace Website.Function.Email
 
                 log.LogError("An Exception occured while sending an email with message: {eMessage}", eMessage);
 
-                ExceptionDetails exceptionDetails = new()
-                {
-                    PartitionKey = request.ToEmail ?? "",
-                    RowKey = myQueueItem,
-                    ExceptionMessage = eMessage
-                };
+                TableEntity exceptionDetails = new();
+                exceptionDetails.PartitionKey = "ExceptionDetails";
+                exceptionDetails.RowKey = Guid.NewGuid().ToString();
+                exceptionDetails.Add("ExceptionMesssage", eMessage);
+                exceptionDetails.Add("QueueMessage", myQueueItem);
 
-                await _storageTableClient.InsertEntityAsync(exceptionDetails);
+                await _tableClient.AddEntityAsync(exceptionDetails);
             }
         }
     }
