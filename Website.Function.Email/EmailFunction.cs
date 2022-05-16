@@ -5,6 +5,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Website.Function.Email.EmailClient;
 using Website.Function.Email.Models;
+using Website.Function.Email.TableStorage;
+using Website.Function.Email.TableStorage.Entities;
 
 namespace Website.Function.Email
 {
@@ -12,9 +14,13 @@ namespace Website.Function.Email
     {
         private readonly IEmailClient _emailClient;
 
-        public EmailFunction(IEmailClient emailClient)
+        private readonly IStorageTableClient _storageTableClient;
+
+        public EmailFunction(IEmailClient emailClient, IStorageTableClient storageTableClient)
         {
             _emailClient = emailClient;
+
+            _storageTableClient = storageTableClient;
         }
 
         [FunctionName("EmailFunction")]
@@ -32,18 +38,7 @@ namespace Website.Function.Email
                 {
                     PropertyNameCaseInsensitive = true,
                 });
-            }
-            catch (Exception ex)
-            {
-                string eMessage = ex.Message;
 
-                log.LogError("Could not serialize jsonPayload into model with message: {eMessage}", eMessage);
-
-                return;
-            }
-
-            try
-            {
                 await _emailClient.SendEmailAsync(request.ToEmail, request.Subject, request.HtmlBody);
 
                 log.LogInformation("Email Successfully sent to: {ToEmail}", request.ToEmail);
@@ -54,7 +49,14 @@ namespace Website.Function.Email
 
                 log.LogError("An Exception occured while sending an email with message: {eMessage}", eMessage);
 
-                log.LogDebug("ToEmail: {ToEmail}", request.ToEmail);
+                ExceptionDetails exceptionDetails = new()
+                {
+                    PartitionKey = request.ToEmail ?? "",
+                    RowKey = myQueueItem,
+                    ExceptionMessage = eMessage
+                };
+
+                await _storageTableClient.InsertEntityAsync(exceptionDetails);
             }
         }
     }
