@@ -1,8 +1,9 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Azure.Data.Tables;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using Website.Function.Email.EmailClient;
-using Website.Function.Email.TableStorage;
 
 [assembly: FunctionsStartup(typeof(Website.Function.Email.Startup))]
 namespace Website.Function.Email
@@ -26,13 +27,16 @@ namespace Website.Function.Email
                 return new SmtpEmailClient(smtpServer, smtpPort, userName, password);
             });
 
-            builder.Services.AddSingleton<IStorageTableClient, StorageTableClient>((serviceProvider) =>
+            builder.Services.AddSingleton<TableClient>((serviceProvider) =>
             {
                 string storageUri = serviceProvider.GetService<IConfiguration>()["StorageUri"];
+                string tableName = serviceProvider.GetService<IConfiguration>()["StorageTableName"];
                 string storageAccountName = serviceProvider.GetService<IConfiguration>()["StorageAccountName"];
                 string storageAccountKey = serviceProvider.GetService<IConfiguration>()["StorageAccountKey"];
 
-                return new StorageTableClient(storageUri, storageAccountName, storageAccountKey);
+                return new TableClient(new Uri(storageUri), tableName,
+                    new TableSharedKeyCredential(storageAccountName, storageAccountKey)
+                    );
             });
         }
     }
