@@ -45,7 +45,9 @@ namespace Website.Function.Email.EmailClient
             email.Body = new TextPart(TextFormat.Html) { Text = htmlBody };
 
 
-            // send email
+            // TODO: deal with concurrent connections limit with outlook.
+            // might consider single thread.
+            // see: https://aka.ms/concurrent_sending
             using (SmtpClient smtp = new())
             {
                 await smtp.ConnectAsync(_smtpServer, _smtpPort, SecureSocketOptions.StartTls);
